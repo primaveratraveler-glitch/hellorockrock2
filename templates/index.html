@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>偏ったロックンロールクイズアプリ</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .quiz-item {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .quiz-item h2 {
+            color: #333;
+            font-size: 18px;
+            margin-top: 0;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #764ba2;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            min-height: 20px;
+        }
+        .result.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .result.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 偏ったロックンロールクイズアプリ</h1>
+        <div id="quizzes"></div>
+    </div>
+
+    <script>
+        const quizData = {{ quizzes | tojson }};
+        const quizzesContainer = document.getElementById('quizzes');
+
+        quizData.forEach((quiz, index) => {
+            const quizItem = document.createElement('div');
+            quizItem.className = 'quiz-item';
+            quizItem.innerHTML = `
+                <h2>問題${index + 1}: ${quiz.question}</h2>
+                <div class="input-group">
+                    <input type="text" id="answer-${index}" placeholder="答えを入力してください">
+                    <button onclick="checkAnswer(${index})">送信</button>
+                </div>
+                <div id="result-${index}" class="result"></div>
+            `;
+            quizzesContainer.appendChild(quizItem);
+        });
+
+        function checkAnswer(index) {
+            const answer = document.getElementById(`answer-${index}`).value;
+            const resultDiv = document.getElementById(`result-${index}`);
+
+            fetch('/check_answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    quiz_index: index,
+                    answer: answer
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultDiv.textContent = data.result;
+                if (data.result === quizData[index].correct) {
+                    resultDiv.className = 'result correct';
+                } else {
+                    resultDiv.className = 'result incorrect';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
