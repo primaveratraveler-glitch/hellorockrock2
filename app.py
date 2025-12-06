@@ -5,7 +5,7 @@ app = Flask(__name__)
 # クイズのデータ
 quizzes = [
     {"question": "あなたはどこ生まれですか？", "answer": "冬の星", "correct": "あなたはシャロンです", "incorrect": "あなたはシャロン以外です"},
-    {"question": "あなたの髪の色は何色ですか？", "answer": "藍色", "correct": "あなたはロメロです", "incorrect": "あなたはロメロ以外です"},
+    {"question": "あなたの髪の色は何色ですか？", "answer": "茶色", "correct": "あなたは多分ベンジーです", "incorrect": "ベンジーじゃないと思います、おそらく。"},
     {"question": "冬の星ってどこだと思いますか？", "answer": "アイスランド", "correct": "あなたはチバユウスケです", "incorrect": "あなたはチバユウスケ以外です"}
 ]
 
@@ -29,4 +29,5 @@ def check_answer():
     return jsonify({'result': 'エラーが発生しました'})
 
 if __name__ == '__main__':
+
     app.run(debug=True, port=5001)
